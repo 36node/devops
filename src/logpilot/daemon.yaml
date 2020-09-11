@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: log-pilot
+  labels:
+    app: log-pilot
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: log-pilot
+  template:
+    metadata:
+      labels:
+        app: log-pilot
+    spec:
+      containers:
+      - name: log-pilot
+        image: registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.5-filebeat
+        env:
+          - name: "LOGGING_OUTPUT"
+            value: "kafka"
+          - name: KAFKA_BROKERS
+            value: "kafka-1:9092"
+          - name: KAFKA_DEFAULT_TOPIC
+            value: "default"
+          - name: KAFKA_OUTPUT_DATA_TYPE
+            value: json
+          - name: KAFKA_REQUIRED_ACKS
+            value: "0"
+          - name: "NODE_NAME"
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        volumeMounts:
+          - name: sock
+            mountPath: /var/run/docker.sock
+          - name: logs
+            mountPath: /var/log/filebeat
+          - name: state
+            mountPath: /var/lib/filebeat
+          - name: root
+            mountPath: /host
+            readOnly: true
+        securityContext:
+          capabilities:
+            add:
+            - SYS_ADMIN
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: sock
+        hostPath:
+          path: /var/run/docker.sock
+      - name: logs
+        hostPath:
+          path: /var/log/filebeat
+      - name: state
+        hostPath:
+          path: /var/lib/filebeat
+      - name: root
+        hostPath:
+          path: /

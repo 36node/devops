@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vector-daemonset-managed-config
+data:
+  managed.toml: |
+    [sources.in]
+      type = "docker"
+
+    [transforms.simplifier]
+      type = "remove_fields"
+      inputs = ["in"]
+      fields = ["io", "image", "pid"]
+
+    [transforms.json]
+      inputs = ["simplifier"]
+      type   = "json_parser"
+      field  = "message"
+      drop_field = true
+      drop_invalid = false
+      overwrite_target = true
+
+    [transforms.topic]
+      type = "lua"
+      inputs = ["json"]
+      source = """
+    if event["topic"] == nil then
+      event["topic"] = "log"
+    end
+    """
+
+    [sinks.kafka]
+      # General
+      type = "kafka"
+      inputs = ["topic"]
+      bootstrap_servers = "kafka-1:9092"
+      compression = "none"
+      healthcheck = true
+      key_field = "time"
+      topic = "{{ topic }}"
+
+      # Encoding
+      encoding.codec = "json"
+
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: vector
+  labels:
+    app: vector
+spec:
+  selector:
+    matchLabels:
+      name: vector
+  template:
+    metadata:
+      labels:
+        name: vector
+    spec:
+      containers:
+        - name: vector
+          image: timberio/vector:latest-alpine
+          args:
+            - --config
+            - /etc/vector/*.toml
+          volumeMounts:
+            - name: sock
+              mountPath: /var/run/docker.sock
+            - name: config-dir
+              mountPath: /etc/vector/
+              readOnly: true
+          env:
+            - name: LOG
+              value: info
+      terminationGracePeriodSeconds: 60
+      volumes:
+        - name: sock
+          hostPath:
+            path: /var/run/docker.sock
+        # Vector config files.
+        - name: config-dir
+          projected:
+            sources:
+              - configMap:
+                  name: vector-daemonset-managed-config
+                  optional: true

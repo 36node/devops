@@ -1,0 +1,44 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin4
+  labels:
+    app: pgadmin4
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 45432
+      targetPort: 80
+  selector:
+    app: pgadmin4
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin4
+  labels:
+    app: pgadmin4
+spec:
+  selector:
+    matchLabels:
+      app: pgadmin4
+  template:
+    metadata:
+      labels:
+        app: pgadmin4
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: pgadmin4
+          image: dpage/pgadmin4
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: postgres@36node.com
+            - name: PGADMIN_DEFAULT_PASSWORD
+              value: 36node
+            - name: PGADMIN_LISTEN_ADDRESS
+              value: "0.0.0.0"
+          ports:
+            - name: http
+              containerPort: 80

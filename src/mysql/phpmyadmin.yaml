@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin
+  labels:
+    app: phpmyadmin
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 43306
+      targetPort: 80
+  selector:
+    app: phpmyadmin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin
+  labels:
+    app: phpmyadmin
+spec:
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: phpmyadmin
+          image: phpmyadmin/phpmyadmin:4.8
+          env:
+            - name: PMA_HOST
+              value: "mysql"
+          ports:
+            - name: http
+              containerPort: 80

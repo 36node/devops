@@ -1,0 +1,26 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: random-json-logger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: random-json-logger
+  template:
+    metadata:
+      labels:
+        app: random-json-logger
+    spec:
+      containers:
+        - name: random-json-logger
+          image: 36node/random-json-logger:latest
+          imagePullPolicy: Never
+          env:
+            - name: aliyun_logs_LOG
+              value: "stdout"
+            - name: aliyun_logs_LOG_target
+              value: "text"
+            - name: aliyun_logs_LOG_format
+              value: "json"

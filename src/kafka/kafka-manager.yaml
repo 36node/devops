@@ -1,0 +1,39 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: kafka-manager
+spec:
+  type: LoadBalancer
+  selector:
+    app: kafka-manager
+  ports:
+    - port: 49092
+      targetPort: 9000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-manager
+  template:
+    metadata:
+      labels:
+        app: kafka-manager
+        vector.dev/exclude: "true"
+      annotations:
+        vector.dev/exclude: "true"
+    spec:
+      containers:
+      - name: kafka-manager
+        image: sheepkiller/kafka-manager
+        ports:
+        - containerPort: 9000
+        env:
+        - name: ZK_HOSTS
+          value: "zoo:2181"

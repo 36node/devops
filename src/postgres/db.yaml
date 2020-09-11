@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  ports:
+    - port: 5432
+  type: LoadBalancer
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  serviceName: "postgres"
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:12-alpine
+          env:
+            - name: POSTGRES_USER
+              value: 36node
+            - name: POSTGRES_PASSWORD
+              value: 36node
+          ports:
+            - containerPort: 5432
