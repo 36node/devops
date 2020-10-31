@@ -1,6 +1,6 @@
 # devops
 
-适用于36node团队开发的 devops，本机主要使用 [docker desktop](https://kubernetes.io/docs/tutorials/hello-minikube/)
+适用于 36node 团队开发的本地 devops，本机主要使用 [docker desktop](https://www.docker.com/products/docker-desktop) 或者[minikube](https://kubernetes.io/docs/tutorials/hello-minikube/)
 
 ## 日志采集
 
@@ -13,9 +13,9 @@
 - 开启 docker for mac 自带的 kubernetes 支持
 - 安装 minikube
 
-### minikube 翻墙
+### minikube 网络问题
 
-在国内由于无法直接访问 google 的资源，所以翻墙是必须的。当本机开启了翻墙之后
+在国内由于无法直接访问 google 的资源，所以 proxy 是必须的。打开方式
 
 ```sh
 export HTTP_PROXY=http://<proxy hostname:port>
