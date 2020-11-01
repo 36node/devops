@@ -14,21 +14,21 @@ vim /etc/hosts
 
 ## Open kafka-manager:
 
-浏览器中打开 kafka-manager 界面
+open kafka-manager in your browser
 
-```
-localhost:49092
-```
+http://localhost:49092
 
 Add new cluster, and use the following data for Cluster Zookeeper Hosts:
 
-```
+```sh
 zoo:2181
 ```
 
 然后在这个界面可以观察 kafka 消息队列的各种参数
 
 ## Test with Kafka-cat
+
+[read this guide](https://brysonwx.wordpress.com/2018/11/05/kafkacatkafkacat%E4%BD%BF%E7%94%A8%E5%B0%8F%E7%BB%93/)
 
 ## Production Deployment
 
