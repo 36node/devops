@@ -3,6 +3,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: echo-logger
+  namespace: dev
 spec:
   type: LoadBalancer
   selector:
@@ -16,6 +17,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: echo-logger
+  namespace: dev
 spec:
   replicas: 1
   selector:
@@ -25,14 +27,9 @@ spec:
     metadata:
       labels:
         app: echo-logger
+        vector.dev/include: "true"
+        vector.dev/topic: "dev.echo"
     spec:
       containers:
         - name: echo-logger
           image: 36node/echo-logger
-          env:
-            - name: aliyun_logs_LOG
-              value: "stdout"
-            - name: aliyun_logs_LOG_target
-              value: "demo"
-            - name: aliyun_logs_LOG_format
-              value: "json"

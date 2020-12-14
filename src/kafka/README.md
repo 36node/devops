@@ -30,6 +30,18 @@ zoo:2181
 
 [read this guide](https://brysonwx.wordpress.com/2018/11/05/kafkacatkafkacat%E4%BD%BF%E7%94%A8%E5%B0%8F%E7%BB%93/)
 
+使用 kafkacat 去监听最新消息
+
+```sh
+kafkacat -b kafka-1 -C -t haha -o end
+```
+
+新开一个命令行窗口用 kafkacat 去生产消息
+
+```sh
+kafkacat -b kafka-1 -t haha  -P
+```
+
 ## Production Deployment
 
 https://github.com/Yolean/kubernetes-kafka

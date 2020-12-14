@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mongo-express
+  namespace: dev
   labels:
     app: mongo-express
 spec:
